@@ -1,0 +1,139 @@
+관계 대수
+
+ 
+관계형 데이터베이스의 사용 단계
+
+1. 관계형 데이터 베이스의 스키마(데이터베이스 구조에 대한 뼈대) 디자인
+
+- 관계형 데이터 베이스에서는 테이블로서 표현하고 스키마를 만드는 언어는 data definition language(DDL)이다.
+
+2. BulkLoad Data
+
+- 한번에 다량의 데이터를 데이터 베이스로 읽어온다.
+
+3. Query 수행
+
+- 사용자가 조건에 만족하는 데이터를 가져오기 위한 Query를 통해 질의를 하고 그 결과인 Answer를 사용자가 얻는다. 사용자가 수정을 위한 Query를 하기도 한다.
+
+* 관계형 데이터 베이스의 쿼리의 결과는 릴레이션(테이블)이며 이 테이블을 대상으로 추가적인 쿼리를 할 수 있으며 이 결과는 또 다른 테이블로써 형성된다.
+
+ 
+관계형 데이터 베이스의 쿼리는 high level language로 표현된다.
+
+ex) 대학에서 학점이 3.7 이상인 학생을 검색하여 달라
+
+지원인원이 50이하인 모든 학과를 검색하여 달라
+
+-> 위와 같은 자연어의 요구를 질의어(query language)로써 표현한다.
+
+ 
+질의 언어
+
+1. 관계 대수 (relation algebra) - 수학적 or 이론적 언어
+
+2. SQL(structed query language) - 실제적인 언어
+
+ 
+관계형 데이터 베이스의 질의 예시
+
+ex) stanford에 지원 학생중 GPA>3.7인 학생의 ID를 구하라
+
+1. 관계 대수
+
+2. SQL
+
+select students.sid
+
+from student, apply
+
+where student.sid=apply.sid
+
+and gpa > 3.7
+
+and cname = 'stanford';
+
+ 
+관계 대수
+
+데이터 모델의 구성요소
+
+- 데이터 베이스의 구조(스키마)와 제약조건 정의
+
+- 데이터를 다루기 위한 연산들의 집합
+
+관계 대수란?
+
+- 관계형 데이터 모델에서 릴레이션(테이블)들을 다루는 연산들
+
+- 릴레이션에 대한 연산의 결과 또한 릴레이션(테이블)이다.
+
+관계 대수의 연산의 종류
+
+- 수학적 집합 연산: 합집합, 교집합, 차집합, 카티션 프로덕트
+
+- 관계형 데이터 베이스를 위한 특별한 연산자: 셀렉트, 프로젝트, 조인
+
+ 
+ex)
+
+college(cname, state, enrollment)
+
+student(sid, sname, gpa, sizehs)
+
+apply(sid cname major, decision)
+
+ 
+SELECT 연산자
+
+σ<선택조건>(R)
+
+릴레이션 R에서 어떤 선택 조건을 만족하는 투플들을 선택한다.
+
+결과 릴레이션은 R과 동일한 애트리뷰트들을 가진다.
+
+결과 릴레이션은 r(R)의 투플 중 애트리뷰트 값들이 선택 조건을 만족하는 투플들로 구성된다.
+
+ex)
+
+students with GPA > 3.7
+
+=> σ GPA>3.7 (student)
+
+students with GPA > 3.7 and HS < 1000
+
+=> σ GPA>3.7 ^ HS<1000 (student)
+
+applications to stanford cs major
+
+=> σ cname='stanford' ^ major='cs' (apply)
+
+ 
+PROJECT 연산자 (picks certain columns)
+
+릴레이션 R에서 애트리뷰트 리스트에 명시된 애트리뷰트들만 선택한다.
+
+연산 형식: π<애트리뷰트 리스트>(R)
+
+ex)
+
+id and decision of all applications
+
+=> π sid, dec (apply)
+
+id and name of studens with GPA>3.7
+
+=> π sid, sname (σ GPA>3.7 (student))
+
+ 
+프로젝트 연산자 사용에서 주의사항
+
+-> 중복(duplicates)
+
+ex) list of application majors and decisions
+
+=> π major, dec (apply) * 중복이 발생
+
+릴레이션은 튜플들의 집합, 집합은 중복되는 원소가 있지 않다. 이에 위는 집합을 위반하게 된다.
+
+이를 해결하기 위해 중복이 되는 튜플을 제거할 필요가 있다.
+
