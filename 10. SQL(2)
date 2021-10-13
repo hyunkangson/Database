@@ -1,0 +1,152 @@
+모호한 애트리뷰트 이름
+
+서로 다른 릴레이션에서 동일한 이름을 갖는 애트리뷰트가 사용될 수 있기에 애트리뷰트 이름을 사용할 때 애트리뷰트 이름 앞에 점(.)을 찍고 테이블 이름을 작성한다.
+
+ex)
+
+Research 부서에서 일하는 모든 종업원들의 이름과 주소를 검색하시오
+
+SELECT FNAME, EMPLOYEE.NAME, ADDRESS
+
+FROM EMPLOYEE, DEPARTMENT
+
+WHERE DEPARTMENT.NAME='Research' AND
+
+DEPARTMENT.DNUMBER=EMPLOYEE.DNUMBER
+
+ 
+별명 사용
+
+테이블에 새로운 이름을 주어야 할 경우
+
+1. 동일한 릴레이션을 두 번 참조하는 경우(릴레이션 이름의 별명을 애트리뷰트 이름 앞에 붙여 사용한다)
+
+ex)
+
+종업원에 대해, 종업원의 성과 이름, 직속 감독자의 성과 이름을 검색하시오
+
+SELECT E.FNAME, E.LNAME, S.FNAME, S.LNAME
+
+FROM EMPLOYEE E, EMPLOYEE S
+
+WHERE E.SUPERSSN=S.SSN;
+
++ AS를 optional하게 사용할 수 있으며 릴레이션의 이름을 바꿀 수 있다.
+
+EMPLOYEE AS E(FN, MI, LN, SSN, BD, ADDR, SEX, SAL, SSSN, DNO)
+
+-> 별명을 주는 이유는 이름을 간단하게 표현할 수 있다.
+
+ 
+ 
+더 복잡한 SQL 질의
+
+ 
+중첩질의(nested query)
+
+질의의 WHERE절 내에 완전한 SELECT 질의가 나타나는 형태
+
+외부 질의와 내부 질의로 구분된다.
+
+비교 연산자 IN(반대는 NOT IN)
+
+- 외부 질의의 한 투플에 대하여 내부 질의의 결과 값에 포함되는지 테스트
+
+ex) SSN이 123456789인 사원이 일하는 프로젝트와 일한 시간의 조합이 동일한 사원의 SSN을 검색하여라
+
+SELECT DISTINCT ESSN
+
+FROM WORKS_ON
+
+WHERE (PNO,HOURS) IN (SELECT PNO,HOURS //내부 질의
+
+FROM WORKS_ON
+
+WHERE SSN='123456789');
+
+ 
+ 
+중첩질의와 집합 비교
+
+=ALL 연산자
+
+하나의 값이 집합 내의 모든 값들과 같으면 참이 된다.
+
+=ANY(=SOME)연산자
+
+하나의 값이 집합 내의 어떤 하나의 값과 같으면 참이 된다.
+
+ 
+ 
+상관 중첩질의(Correlated nested query)
+
+내부 질의의 WHERE절에 있는 조건에서 외부질의에 선언된 릴레이션의 일부 애트리뷰트를 참조하는 경우
+
+ex)
+
+자신의 부양가족과 이름, 성별이 같은 종업원들의 이름을 검색하시오
+
+SELECT E.FNAME, E.LANME
+
+FROM EMPLOYEE AS E
+
+WHERE E.SSN IN( SELECT ESSN
+
+FROM DEPENDENT
+
+WHERE
+
+E.FNAME=DEPENDENT_NAME AND
+
+E.SEX=SEX);
+
+비중첩 질의로의 변환
+
+중첩 질의로 만들어진 쿼리들은 대부분 중첩 질의를 사용하지 않은 조인을 사용한 쿼리로 변환이 가능하다.
+
+SELECT E.FNAME, E.LNAME
+
+FROM EMPLOYEE AS E.DEPENDENT AS D
+
+WHERE E.SSN=D.ESSN AND E.FNAME=DEPENDENT_NAME AND
+
+E.SEX=D.SEX;
+
+ 
+ 
+EXISTS 함수
+
+내부 질의의 결과가 공집합인지 여부를 판단하여 공집합인 경우 포함하지 않고 공집합이 아닌 경우 외부 질의에 해당되는 튜플을 최종 결과값에 포함시킨다.
+
+ex)
+
+자신의 부양 가족과 이름, 성별이 같은 종업원들의 이름을 검색하시오
+
+SELECT E.FNAME, E.LNAME
+
+FROM EMPLOYEE E
+
+WHERE EXISTS (SELECT *
+
+FROM DEPENDENT
+
+WHERE E.SSN=ESSN AND E.SEX=SEX
+
+AND E.FNAME=DEPENDENT_NAME);
+
+ 
+NOT EXISTS 함수
+
+ex)
+
+부양 가족이 없는 종업원들의 이름을 검색하시오
+
+SELECT FNAME, LNAME
+
+FROM EMPLOYEE
+
+WHERE NOT EXISTS (SELECT *
+
+FROM DEPENDENT
+
+WHERE SSN=ESSN);
