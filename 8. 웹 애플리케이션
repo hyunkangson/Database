@@ -1,0 +1,69 @@
+웹 응용(application) 
+
+이미 만들어진 웹 페이지를 보내주는 것이 아닌 요구에 따라 웹 서버에서 응용프로그램이 돌아가 응용프로그램이 요청한 정보에 따라 응답을 보내준다.
+
+ 
+data driven web application
+
+데이터 베이스에 값을 생성/검색/변경/삭제를 통해 동적으로 만들어서 브라우저로 전송한다.
+
+ 
+제작에 필요한 기본지식
+
+html: 브라우저에 보여지는 최종 결과는 html 문서 형태이다.
+
+css: html 문서에서 컨텐츠의 색,모양,배치 등을 결정한다.
+
+web framework: 웹 응용을 제작하기 위한 코드/도구의 집합
+
+sql: 데이터베이스를 만들고 쿼리를 통해 데이터 생성/검색/변경/삭제 수행
+
+ 
+클라이언트, 서버
+
+클라이언트 - 정보 요청
+
+서버 - 요청된 정보를 가공하여 클라이언트에 전달
+
+http 프로토콜: 클라이언트와 서버가 웹상에서 프로토콜을 통해 통신
+
+GET, POST를 통해 서버에 요청
+
+Status code: 서버에서 이상없이 처리되면 보통 status code 200을 응답으로 보낸다.
+
+ 
+html(hypertext markup language)
+
+markup language: 프로그래밍 언어가 아닌 웹 브라우저가 문서를 어떻게 표현해 줄 지 결정하는 언어
+
+head: 컨텐츠가 아닌 문서에 대한 정보를 갖는다.
+
+body: 실제 문서의 내용이 정의되어 있다.
+
+element들이 tree(중첩된)형태로 구성되어 있으며 opening tag와 closing tag에 들어있다.
+
+ 
+html forms
+
+사용자가 데이터를 입력하고 웹서버로 전송하기 위한 html요소
+
+<form>...</form> 이용해 form을 정의한다
+
+입력 요소들을 input button textarea등의 요소를 통해 만들어진다.
+
+ 
+css(cascading style sheets)
+
+html은 문서의 내용을 담았다면 css는 요소들의 색, 크기, 배치등을 결정한다.
+
+css ruleset: css는 많은 ruleset들로 구성되며 selector와 declaration으로 구성된다.
+
+p(selector) {
+
+color(property): red(property value); // declaration
+
+}
+
+css 배치: html에서 css배치는 박스 모델을 따른다. content가 있고 주위에 padding, pdding을 둘러싼 border, margin이 박스의 형태로 둘러싼다.
+
+ 
