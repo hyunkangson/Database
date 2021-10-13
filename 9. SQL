@@ -1,0 +1,243 @@
+SQL(Structed Query Language)
+
+대부분의 dbms에 지원되는 가장 보편적인 데이터 처리언어
+
+관계 대수에 기반을 두고 있음
+
+declarative(선언적) language(“어떻게”가 아닌 “무엇을”에 관해 기술)
+
+DDL, DML 모두 포함
+
+ 
+SQL에서 애트리뷰트의 데이터 타입
+
+정수: INTEGER, INT, SMALLINT
+
+실수: FLOAT, REAL, DOUBLE PRECISION
+
+고정길이 문자열: CHAR(n), CHARACTER(n)
+
+가변길이 문자열: VARCHAR(n), CHAR VARYING(n), CHARACTERVARYING(n), TEXT
+
+불리언: BOOLEAN,Unknown
+
+날짜와 시간: DATE(YYYY-MM-DD), TIME(HH:MM:SS)
+
+타임스탬프: DATE+TIME+초의 소수점 이하 자리
+
+ 
+ 
+컬럼에 대한 제약조건 설정
+
+sql은 애트리뷰트 값으로 NULL을 허용함
+
+NOT NULL제약조건을 지정하여 애트리뷰트에 NULL값을 허용하지 않을 수 있다.
+
+키는 아니지만 사원의 이름같이 공란이 들어가면 말이 안되는 경우가 있다.
+
+ex) CREATE TABLE DEPARTMENT
+
+(DNUMBER INT NOT NULL, ...);
+
+디폴트 값을 갖는 경우
+
+ex) CREATE TABLE EMPLOYEE
+
+(DNO INT DEFAULT1, ...);
+
+PRIMARY KEY: 릴레이션 기본 키를 구성하는 하나 이상의 애트리뷰트들을 명시
+
+UNIQUE: 후보키를 명시
+
+CREATE TABLE PROJECT
+
+(PNAME VARCHAR(15) NOT NULL,
+
+PUNMBER INT NOT NULL,
+
+PLOCATION VARCHAR(15),
+
+DNUM INT
+
+PRIMARY KEY(PNUMBER),
+
+UNIQUE(PANME),
+
+FOREIGN KEY(DNUM) REFRENCES DEPARTMENT(DNUM)
+
+ 
+참조 무결성 제약조건
+
+FOREIGN KEY절
+
+참조 무결성 지정
+
+외래 키를 정의할 때 참조 무결성의 위반 시 취할 동작을 명시할 수 있음
+
+위반의 종류: ON DELETE, ON UPDATE - 애트리뷰가 참조하고 있을 때 참조 당하는 애트리뷰트의 값이 지워지거나 값이 바뀌는 경우
+
+동작의 종류
+
+- SET NULL: 참조하고 있는 것이 없어졌을 경우 NULL로 변경
+
+- SET DEFAULT: 참조할 대상이 사라졌기에 DEFAULT로 변경
+
+- CASCADE: 참조하는 대상을 참조하는 것을 삭제
+
+제약조건에 이름 부여
+
+CONSTRAINT절에 이름 부여(OPTIONAL)
+
+ex) CONSTRAINT EMPSUPERFK
+
+FOREIGN KEY(SUPERSSN) REFERENCES EMPLOYEE(SSN)
+
+ON DELETE SET NULL ON UPDATE CASCADE;
+
+ 
+ 
+SQL에서 스키마 변경
+
+스키마의 변경은 잘 일어나지 않는다.
+
+DROP TABLE EMPLOYEE; : EMPLOYEE 릴레이션 제거 명령
+
+ALTER TABLE: 열의 추가/제거, 이름의 변경
+
+ex) ALTER TABLE COMPANY.EMPLOYEE ADD JOB VARCHAR(12);
+
+EMPLOYEE 테이블에 JOB 애트리뷰트 추가
+
+ALTER TABLE COMPANY.EMPLOYEE DROP ADDRESS CASCADE;
+
+EMPLOYEE 테이블에 ADDRESS 애트리뷰트 제거
+
+ 
+SELECT: 데이터 베스에서 정보를 검색하는 기본 문장
+
+SQL 테이블은 투플들의 집합이 아니라 투플들의 다중집합이다.
+
+DISTINCT 키워드를 사용하여 중복된 튜플이 남아있을 수 있다.
+
+ex)
+
+SELECT A1,A2,A3,...,An
+
+FROM T1,T2,...,Tn
+
+WHERE Condition
+
+테이블로부터 만족하는 조건에 따라 애트리뷰트를 찾는다.
+
+ 
+ 
+WHERE의 생략과 *으; 시용
+
+SQL에서 WHERE을 생략하면 투플 선택에 대한 조건이 없다는 것을 의미한다
+
+FROM절에 있는 테이블의 모드 투플이 조건을 만족하게 된다.
+
+테이블이 여러개 있는 경우
+
+ex) EMPLOYEE의 SSN과 DEPARTMENT의 DNAME의 모든 조합을 선택하시오
+
+SELECT SSN,DNAME
+
+FROM EMPLOYEE, DEPARTMENT;
+
+ 
+모든 애트리뷰트를 다 선택하고 싶으면 SELECT *
+
+ 
+투플의 중복허용
+
+중복된 튜플을 없애고 싶은 경우, 즉 집합으로서 취급하기 위해 사용하는 키워드는 DISTINCT
+
+ex) SELECT SALARY
+
+FROM EMPLOYEE; 이 경우 모든 사원의 임금이 중복되어 나온다
+
+SELECT DISTINCT SALARY
+
+FROM EMPLOYEE; 중복되는 값이 없이 임금을 보여준다.
+
+ 
+DISTINCT를 이용해 명시적으로 제거 할 수 있으나 집합 연산자를 통해 묵시적으로 제거한다.
+
+합집합(UNION), 차집합(EXCEPT), 교집합(INTERSECT)
+
+ 
+ 
+부분 문자열 패턴 비교와 산술 연산자
+
+%: 임의의 개수의 문자
+
+_: 임의의 한개의 문자
+
+ex) 거주 도시가 Houston, Texas인 모든 종업원을 검색하시오
+
+SELECT FNAME, LNAME
+
+FROM EMPLOYEE
+
+WHRERE ADDRESS LIKE '%Houston, Texas%';
+
+ex) 1950년대 태어난 모든 사원을 검색하라
+
+SELECT FNAME, LNAME
+
+FROM EMPLOYEE
+
+WHERE BDATE LIKE '195_______';
+
+ex) XPRODUCT 프로젝트에 참여하는 모든 사원의 급여를 10% 올린 경우의 급여를 검색하여라
+
+SELECT FNAME,LNAME 1.1*SALARY AS NEWSALARY
+
+FROM EMPLOYEE,WORKS_ON,PROJECT
+
+WHERE SSN=ESSN AND PNO=PNUMBER AND PNAME='XPRODUCT';
+
+ 
+결과 값의 정렬
+
+ORDER BY: 하나 이상의 애트리뷰트 값 순서로 질의 결과 튜플을 정렬
+
+기본 정렬은 오름차순이다.
+
+DESC: 내림차순으로 정렬
+
+ASC: 오름차순으로 정렬
+
+ex) ORDER BY DNAME DESC, LNAME ASC, FNAME, ASC
+
+ 
+모호한 애트리뷰트 이름
+
+같은 테이블에서는 이름의 중복이 없으나 다른 테이블 간은 중복된 이름을 갖어 모호함을 갖게 될 수 있다. 이에 애트리뷰트 이름 앞에 .을 찍고 테이블 이름을 쓴다.
+
+ex) Research 부서에서 일하는 모든 종업원들의 이름과 주소를 검색하시오
+
+SELECT FNAME, EMPOYEE.NAME, ADDRESS
+
+FROM EMPLOYEE, DEPARTMENT
+
+WHERE DEPARTMENT.NAME='Research' AND DEPARTMENT.DNUMBER=EMPLOYEE.DNUMBER;
+
+ 
+별명 사용
+
+동일한 릴레이션을 두 번 참조하는 경우
+
+ex) 종버원에 대해, 종업원의 성과 이름, 직속 감독자의 성과 이름을 검색하시오
+
+SELECT E.FNAME, E.LNAME, S.FNAME, S.LNAME
+
+FROM EMPLOYEE E, EMPLOYEE S
+
+WHERE E.SUPERSSN=S.SSN;
+
+ 
+키워드AS의 이용
+
+FROM절의 릴레이션 이름 바로 다음이나 EMPLOYEE AS S 처럼 키워드 AS를 이용해서 릴레이션과 연결시킨다.
