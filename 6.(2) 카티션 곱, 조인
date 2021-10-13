@@ -1,0 +1,74 @@
+카티션 곱(cartesian product or corss product) 연산
+
+다수의 릴레이션에 대해 연관시켜 연산을 적용할 때 사용
+
+ex) R1(A_1,A_2, ,,, , A_M) X R2(B_1,B_2, ,,, , B_N) -> R(A_1,A_2, ,,, , A_M, B_1,B_2, ,,, B_N)
+
+즉, R1이 M개 R2가 N개의 투플을 갖는다면 R은 M X N개의 투플을 갖는다.
+
+카티션 곱은 그 자체로는 두 개의 릴레이션에서 공통된 항목에 대해 값이 다른 경우가 있어 큰 의미가 없을 수 있지만 적절한 SELECT 연산과 함께 사용한다면 여러 개의 릴레이션을 통해 의미있는 조합을 만들어낼 수 있다.
+
+ 
+ex) names and GPAs of students with HS>1000 who applied to cs and were rejected
+
+1. (student x apply) -> 4+4 = 8개의 애트리뷰트, 4*4 = 16개의 튜플
+
+2. SELECT를 통해 의미 있는 정보를 선택 (student, apply테이블의 studnet.sid 와 apply.sid가 같은 경우를 선택해야 한다.
+
+3. 그리고 name , GPA를 구해야 한다.
+
+=> π sname, GPA (σ student.sid = apply.sid(student x apply) ^ HS>1000 ^ major = 'cs' ^ dec = 'N')
+
+ 
+ex) 등록학생(enr)이 10000명 보다 많고 cs전공에 지원자가 있는 학교 이름을 구하시오
+
+=> attribute : 4+4 =8, tuple: 4*4=16
+
+=> π college.cname ( σ college.cname = apply.cname(college x apply) ^ major = 'cs' ^ enr>10000)
+
+ 
+ 
+내추럴 조인 연산
+
+카티션 곱, 셀렉트, 프로젝트를 통해 모든 처리가 가능하기에 꼭 필요한 연산은 아니지만 편의성을 위해 사용한다.
+
+R ⋈ S => R과 S에서 동일한 이름을 갖는 애트리뷰트가 있을 때 값이 같은 경우 이를 제외한 값을 제거하고 같은 값 중에서는 중복되지 않게 하나만 남긴다.
+
+ 
+ex) names and GPAs of students with HS>1000 who applied to cs and were rejected
+
+student ⋈ apply => attribute: 4+4-1(sid) = 7, tuple : 4
+
+π sname, GPA (σ major = 'cs' ^dec = 'N' ^ HS>1000 (student ⋈ apply))
+
+ 
+ex) names and GPAs of students with HS>1000 who applied to cs at college with enr>10000 and were rejected
+
+π sname, GPA( σ HS>1000 ^ major ='cs' ^ dec = 'N' ^ enr > 10000 (college ⋈ apply) ⋈ student)
+
+ 
+ 
+세타 조인 연산
+
+두 릴레이션으로부터 관련있는 튜플을 결합하여 하나의 튜플을 생성
+
+R ⋈θ S = σθ (R X S)
+
+theta 위치에 조인 조건을 적는다.
+
+dbms에서 구현된 기본 연산이다.
+
+ 
+ex) names and GPAs of students with HS>1000 who applied to cs and were rejected
+
+π sname, GPA( σ major = 'cs' ^ dec = 'N' ^ HS>1000(student ⋈student.sid=apply.sid apply))
+
+ 
+ 
+조인 선택율(selectivity)
+
+선택율 = 조인 결과의 튜플의 개수 / 카티션 프로덕트로 생성된 튜플의 개수
+
+조인 선택율 = 조인 조건을 만족하는 튜플의 개수 / 카티션 프로덕트로 생성된 튜플 개수
+
+ 
