@@ -1,0 +1,236 @@
+집단 함수
+
+ 
+
+COUNT, SUM, MAX, MIN, AVG 등 집단함수를 SQL에서 제공한다.
+
+집단 함수는 한 개의 튜플이 아닌 여러 개의 집단에 적용한다.
+
+
+
+ex) 종업원의 급여의 합, 최고 급여, 최저 급여, 평균 급여를 구하시오
+
+SELECT SUM(SALARY), MAX(SALARY), MIN(SALARY), AVG(SALARY)
+
+FROM EMPLOYEE;
+
+
+
+ex) research부서에 있는 종업원들의 급여의 합과, 최고 급여, 최저 급여, 평균 급여를 구하시오
+
+SELECT SUM(SALARY), MAX(SALARY), MIN(SALARY), AVG(SALARY)
+
+FROM EMPLOYEE, DEPARTMENT
+
+WHERE DNO=DNUMBER AND DNAME='Research';
+
+ 
+
+COUNT(*): 투플들의 수를 반환
+
+
+
+ex) 회사내의 총 종업원의 수를 검색하시오
+
+SELECT COUNT(*)
+
+FROM EMPLOYEE;
+
+
+
+ex) research 부서에 속해 있는 종업원의 수를 검색하시오
+
+SELECT COUNT(*)
+
+FROM EMPLOYEE, DEPARTMENT
+
+WHERE DNO=DNUMBER AND DNAME='Research';
+
+ 
+
+특정 투플을 선택하기 위해 집단함수 이용: 중첩 질의 이용
+
+ex) 둘 이상의 부양가족이 있는 모든 사원의 이름을 검색하시오,
+
+SELECT LNAME, FNAME
+
+FROM EMPLOYEE
+
+WHERE (SELECT COUNT(*)
+
+                FROM DEPENDENT
+
+                WHERE SSN=ESSN) >= 2;
+
+
+
+
+
+그룹화
+
+
+
+집단 함수는 전체 테이블의 튜플이나 조건에 만족하는 전체 튜플에 대한 적용을 하였는데 GROUP BY + ATTRIBUTE 를 하게 되면 주언진 ATTRIBUTE에 따라 그룹을 생성한다.
+
+
+
+ex) 각 부서에 대하여, 부서 번호, 부서 내에 있는 종업원의 수, 평균 봉급
+
+SELECT DNO, COUNT(*), AVG(SALARY)
+
+FROM EMPLOYEE
+
+GROUP BY DNO;
+
+-> EMPLOYEE 투플들을 DNO을 기준으로 분할하여 그룹 생성
+
+-> 그 다음에, 각 그룹의 투플들에 대하여 COUNT, AVG 적용
+
+
+
+ex) 각 프로젝트에 대하여 프로젝트 번호, 프로젝트 이름, 그 프로젝트에서 근무하는 사원들의 수를 검색해라
+
+SELECT PNUMBER, PNAME, COUNT(*)
+
+FROM PROJECT, WORKS_ON
+
+WHERE PNUMBER=PNO
+
+GROUP BY PNUMBER;
+
+
+
+ex) 세 명 이상의 사원이 근무하는 각 프로젝트에 대해서 프로젝트 번호, 이름, 근무하는 사원의 수를 검색하라
+
+SELECT PNUMBER, PNAME, COUNT(*)
+
+FROM PROJECT, WORKS_ON
+
+WHERE PNUMBER=PNO
+
+GROUP BY PNUMBER
+
+HAVING COUNT(*) >= 3;            // HAVING은 GROUP BY에서만 쓰이며 각각의 그룹에 대하여 HAVING에 있는 조건을 제시한다.
+
+
+
+
+
+널 값을 포함한 비교
+
+
+
+널 값의 의미
+
+1. 값이 알려지지 않은 경우(Unknowned, 존재하지만 알지 못하는)
+
+2. 적용할 수 없는 경우(Undefined)
+
+
+
+애트리뷰트 값이 널인지 검색하는 연산자
+
+IS NULL, IS NOT NULL
+
+
+
+ex) 상사가 없는 모든 종업원들의 이름을 검색하시오
+
+SELECT FNAME, LNAME
+
+FROM EMPLOYEE
+
+WHERE SUPERSSN IS NULL;
+
+
+
+
+
+INSERT 구문
+
+
+
+ex)  한 개의 튜플 추가
+
+INSERT INTO EMPLOYEE
+
+VALUES ('richard','k','marini' ,,,,,);
+
+
+
+ex) 여러 개의 튜플 추가
+
+INSERT INTO DEPTS INFO
+
+SELECT DNAME, COUNT(*), SUM(SALARY)
+
+FROM DEPRATMENT, EMPLOYEE
+
+WHERE DNUMBER=DNO
+
+GROUP BY DNAME;;
+
+
+
+
+
+DELETE 구문
+
+
+
+ex) 한 개의 튜플 제거
+
+DELETE FROM EMPLOYEE
+
+WHERE LNAME='BROWN';
+
+
+
+ex) 중첩 질의를 통한 제거
+
+DELETE FROM EMPLOYEE
+
+WHERE DNO IN (SELECT DNUMBER
+
+                   FROM DEPARTMENT
+
+                   WHERE DNAME = 'Research');
+
+
+
+ex) where절 생략을 통해 테이블내의 모든 투플 제거
+
+DELETE FROM EMPLOYEE;
+
+
+
+
+
+UPDATE 구문
+
+
+
+여러 개의 튜플에 대한 애트리뷰트 값 수정
+
+ex) PROJECT 테이블에서 PNUMBER가 10인 듀플에 대해 PLOCATION을 'Bellarire', 담당부서인 DNUM을 5로 변경
+
+UPDATE PROJECT
+
+SET PLOCATION='Bellarire', DNUM=5
+
+WHERE PNUMBER=10;
+
+
+
+ex) research 부서에 있는 모든 종업원들의 봉급을 10% 인상하여라
+
+UPDATE EMPLOYEE
+
+SET SALARY = SALARY*1.1
+
+WHERE DNO IN ( SELECT DNUMBER
+
+                     FROM DEPARTMENT
+
+                     WHERE DNAME = 'Research');
+
